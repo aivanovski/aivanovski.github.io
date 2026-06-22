@@ -4,6 +4,7 @@
 
 # Rust
 target/
+dist/
 
 # IntelliJ
 *.iml

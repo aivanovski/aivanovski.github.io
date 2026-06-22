@@ -7,9 +7,8 @@ cargo run
 
 # Render static html
 The command will render static html files into ./dist folder.
-Then any http server can server it.
+Then any http server can serve it.
 ```
-cargo run --output ./dist
+cargo run -- --output ./dist
 python3 -m http.server 8000 --directory dist
 ```
-

@@ -1,15 +1,16 @@
-use std::fs;
-use std::path::{Path, PathBuf};
 use crate::error::AppError;
 use crate::posts::load_posts;
-use crate::{POSTS_DIRECTORY, STATIC_DIRECTORY};
 use crate::views::about::render_about;
 use crate::views::home::render_home;
 use crate::views::post::render_post;
+use crate::{POSTS_DIRECTORY, STATIC_DIRECTORY};
+use std::fs;
+use std::path::{Path, PathBuf};
 
 pub fn export_static_site(output: &Path) -> Result<(), AppError> {
     let posts = load_posts(&PathBuf::from(POSTS_DIRECTORY))?;
 
+    write_file(&output.join(".nojekyll"), String::new())?;
     write_file(&output.join("index.html"), render_home(&posts))?;
     write_file(&output.join("home").join("index.html"), render_home(&posts))?;
     write_file(

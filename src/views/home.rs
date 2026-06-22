@@ -1,5 +1,5 @@
 use crate::model::Post;
-use crate::views::renderer::{format_post_url, render_page, ActivePage, Page};
+use crate::views::renderer::{ActivePage, Page, format_post_url, render_page};
 use leptos::prelude::*;
 
 pub fn render_home(posts: &[Post]) -> String {
