@@ -1,0 +1,16 @@
+# Log/OS Files
+*.log
+.DS_Store
+
+# Rust
+target/
+
+# IntelliJ
+*.iml
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Keys
+keys/*
