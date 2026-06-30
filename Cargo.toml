@@ -16,6 +16,7 @@ ignore = "0.4"
 toml = "0.5"
 chrono = "0.4"
 markdown-readtime = "0.1.1"
+rss = "2.0"
 
 [dev-dependencies]
 tower = { version = "0.5", features = ["util"] }

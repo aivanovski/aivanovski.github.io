@@ -1,4 +1,4 @@
-use crate::views::icons::{close_icon, home_icon, menu_icon, moon_icon, sun_icon};
+use crate::views::icons::{close_icon, home_icon, menu_icon, moon_icon, rss_icon, sun_icon};
 use crate::views::renderer::{ActivePage, nav_link};
 use leptos::either::Either;
 use leptos::prelude::*;
@@ -32,6 +32,14 @@ pub fn header(active_page: ActivePage) -> impl IntoView {
                     </nav>
 
                     <div class="nav-actions">
+                        <a
+                            class="icon-button"
+                            href="/rss.xml"
+                            aria-label="RSS feed"
+                            title="RSS feed"
+                        >
+                            {rss_icon()}
+                        </a>
                         <button
                             class="icon-button"
                             type="button"
@@ -71,6 +79,7 @@ pub fn header(active_page: ActivePage) -> impl IntoView {
                     <nav class="mobile-nav">
                         {nav_link("/", "Posts", posts_active, "")}
                         {nav_link("/about", "About", active_page == ActivePage::About, "")}
+                        <a href="/rss.xml">"RSS feed"</a>
                     </nav>
                 </aside>
             </div>

@@ -25,6 +25,12 @@ pub fn render_page(content: impl RenderHtml + Send + 'static, page: Page) -> Str
                 <title>{page.title}</title>
                 <meta name="description" content=page.description/>
                 <link
+                    rel="alternate"
+                    type="application/rss+xml"
+                    title="Aliaksei Ivanouski RSS Feed"
+                    href="/rss.xml"
+                />
+                <link
                     id="highlight-theme-dark"
                     rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/tokyo-night-dark.min.css"

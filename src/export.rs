@@ -1,4 +1,5 @@
 use crate::error::AppError;
+use crate::feed::render_rss_feed;
 use crate::posts::load_posts;
 use crate::views::about::render_about;
 use crate::views::home::render_home;
@@ -18,6 +19,7 @@ pub fn export_static_site(output: &Path) -> Result<(), AppError> {
         render_home(&posts),
     )?;
     write_file(&output.join("about").join("index.html"), render_about())?;
+    write_file(&output.join("rss.xml"), render_rss_feed(&posts)?)?;
 
     for post in &posts {
         write_file(

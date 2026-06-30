@@ -2,10 +2,12 @@ extern crate core;
 
 mod error;
 mod export;
+mod feed;
 mod model;
 mod posts;
 mod views;
 
+use crate::feed::render_rss_feed;
 use crate::model::CliArguments;
 use crate::posts::PostsRepository;
 use crate::views::about::render_about;
@@ -17,8 +19,11 @@ use axum::extract::State;
 use axum::{
     Router,
     extract::Path as AxumPath,
-    http::{HeaderValue, StatusCode, header::CACHE_CONTROL},
-    response::Html,
+    http::{
+        HeaderValue, StatusCode,
+        header::{CACHE_CONTROL, CONTENT_TYPE},
+    },
+    response::{Html, IntoResponse},
     routing::get,
 };
 use clap::Parser;
@@ -76,6 +81,7 @@ fn create_app() -> Router {
         .route("/home", get(home))
         .route("/posts", get(home))
         .route("/about", get(about))
+        .route("/rss.xml", get(rss))
         .route("/posts/{path}", get(post))
         .nest_service("/static", static_files)
         .with_state(app_state)
@@ -114,4 +120,14 @@ async fn post(
 
 async fn about() -> Html<String> {
     Html(render_about())
+}
+
+async fn rss(State(state): State<AppState>) -> Result<impl IntoResponse, StatusCode> {
+    let posts = state
+        .posts_repository
+        .list_posts()
+        .map_err(internal_server_error)?;
+    let feed = render_rss_feed(&posts).map_err(internal_server_error)?;
+
+    Ok(([(CONTENT_TYPE, "application/rss+xml; charset=utf-8")], feed))
 }
