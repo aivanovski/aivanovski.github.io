@@ -108,3 +108,89 @@ document.addEventListener("keydown", (event) => {
     closeDrawer();
   }
 });
+
+const tocLinks = Array.from(document.querySelectorAll("[data-toc-link]"));
+const tocSections = tocLinks
+  .map((link) => {
+    const href = link.getAttribute("href");
+
+    if (!href || !href.startsWith("#")) {
+      return null;
+    }
+
+    const heading = document.getElementById(decodeURIComponent(href.slice(1)));
+
+    if (!heading) {
+      return null;
+    }
+
+    // Pair each sidebar link with the heading element it points to so the
+    // scroll handler can reason about sections instead of raw href strings.
+    return { link, heading };
+  })
+  .filter(Boolean);
+
+function setActiveTocLink(activeId) {
+  tocSections.forEach(({ link, heading }) => {
+    const isActive = heading.id === activeId;
+
+    link.classList.toggle("is-active", isActive);
+
+    if (isActive) {
+      link.setAttribute("aria-current", "location");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+if (tocSections.length > 0) {
+  let scheduled = false;
+
+  function syncActiveTocLink() {
+    scheduled = false;
+
+    // Treat the section nearest the top of the viewport as active. The offset
+    // makes the highlight change slightly before a heading touches the very top.
+    const scrollPosition = window.scrollY + 180;
+    let activeSection = tocSections[0];
+
+    tocSections.forEach((section) => {
+      const top = section.heading.getBoundingClientRect().top + window.scrollY;
+
+      if (top <= scrollPosition) {
+        activeSection = section;
+      }
+    });
+
+    setActiveTocLink(activeSection.heading.id);
+  }
+
+  function scheduleTocSync() {
+    if (scheduled) {
+      return;
+    }
+
+    // Scroll can fire very often, so updates are batched into the next paint.
+    scheduled = true;
+    window.requestAnimationFrame(syncActiveTocLink);
+  }
+
+  tocLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const href = link.getAttribute("href");
+
+      // Apply the active state immediately on click, then let scroll position
+      // take over once the browser finishes jumping to the heading.
+      if (href?.startsWith("#")) {
+        setActiveTocLink(decodeURIComponent(href.slice(1)));
+      }
+    });
+  });
+
+  window.addEventListener("scroll", scheduleTocSync, { passive: true });
+  window.addEventListener("resize", scheduleTocSync);
+  window.addEventListener("hashchange", scheduleTocSync);
+
+  scheduleTocSync();
+}
